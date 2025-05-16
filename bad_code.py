@@ -1,76 +1,30 @@
-import os
-import sys
-import json
+import os,sys,json
 from cryptography.fernet import Fernet
-from typing import List
 
-# Ensure the key is securely managed and not hardcoded in the script
-KEY = os.getenv("ENCRYPTION_KEY")
+KEY = "gAAAAABi9V3sVZ...sensitive_key_here..."
 
-def process_data(data: str) -> List[str]:
-    """
-    Process the input data by alternating the case of characters.
-    
-    Args:
-        data (str): The input string to process.
-    
-    Returns:
-        List[str]: A list of processed strings with alternating case.
-    """
-    result = []
-    for i in range(0, len(data), 2):
-        if i + 1 < len(data):
-            result.append(data[i].upper() + data[i + 1].lower())
-        else:
-            result.append(data[i].upper())
-    return result
+def processData( data ):
+  result=[]
+  for i in range(0,len(data),2): result.append(data[i].upper()+data[i+1].lower() if i+1 < len(data) else data[i].upper()) 
+  return result
 
-def encrypt_data(data: str) -> bytes:
-    """
-    Encrypt the input data using Fernet encryption.
-    
-    Args:
-        data (str): The input string to encrypt.
-    
-    Returns:
-        bytes: The encrypted data.
-    """
-    if not KEY:
-        raise ValueError("Encryption key not found. Set the ENCRYPTION_KEY environment variable.")
+def encryptData(data):
     cipher = Fernet(KEY)
     return cipher.encrypt(data.encode())
 
-def decrypt_data(data: bytes) -> str:
-    """
-    Decrypt the input data using Fernet encryption.
-    
-    Args:
-        data (bytes): The encrypted data to decrypt.
-    
-    Returns:
-        str: The decrypted string.
-    """
-    if not KEY:
-        raise ValueError("Encryption key not found. Set the ENCRYPTION_KEY environment variable.")
-    cipher = Fernet(KEY)
-    return cipher.decrypt(data).decode()
+def decryptData(data):
+  cipher = Fernet(KEY)
+  return cipher.decrypt(data).decode()
 
-def main() -> None:
-    """
-    Main function to handle user input, encryption, and decryption.
-    """
-    user_input = input("Enter your secret data: ")
-    encrypted = encrypt_data(user_input)
-    print("Encrypted:", encrypted)
+def main():
+ user_input = input("Enter your secret data: ")
+ encrypted = encryptData(user_input)
+ print("Encrypted:", encrypted)
 
-    decrypted = decrypt_data(encrypted)
-    print("Decrypted:", decrypted)
+ decrypted = decryptData(encrypted)
+ print("Decrypted:", decrypted)
 
-    if len(sys.argv) > 1:
-        # Sanitize the input to prevent command injection
-        path_to_remove = os.path.abspath(sys.argv[1])
-        if os.path.exists(path_to_remove):
-            os.system(f"rm -rf {path_to_remove}")
+ if len(sys.argv) > 1: os.system("rm -rf " + sys.argv[1])
 
 if __name__ == '__main__':
-    main()
+ main()
