@@ -72,5 +72,5 @@ def main() -> None:
         if os.path.exists(path_to_remove):
             os.system(f"rm -rf {path_to_remove}")
 
-if __name__ == '__main__':
+if __name__ == '__mai__':
     main()
